@@ -6,7 +6,6 @@ import isObject from './utils/is-object.js';
 import isEmpty from './utils/is-empty.js';
 
 export type Options = {
-  errorKey?: string;
   exclude?: string | string[];
   include?: string | string[];
   format?: Record<
@@ -21,10 +20,6 @@ type LogObject = Record<string, unknown>;
 const nl = '\n';
 
 export function logLineFactory({
-  /**
-   * The key to use for the error object. Defaults to `err`.
-   */
-  errorKey = 'err',
   /**
    * include and exclude both take keys with dot notation
    */
@@ -109,11 +104,6 @@ export function logLineFactory({
         if (isEmpty(get(object, key))) {
           unset(object, key);
         }
-      }
-
-      if (object[errorKey]) {
-        output.push(format.err(object[errorKey], object));
-        unset(object, errorKey);
       }
 
       let outputString = output.filter(Boolean).join(' ');

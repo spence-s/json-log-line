@@ -92,3 +92,27 @@ console.log(lineFormatter(log));
 ```
 
 Often times you will want to stream nd json logs into a function that formats each log.
+
+## Options
+
+### format
+
+`Record<keyof parsed log object, () => string>`
+
+Format is an object the represents how you want to parse the log object. It will parse in natural order of the object.
+
+#### format.extraFields
+
+A special key that contains the rest of the log object fields which were both included and not formatted by a format function.
+
+### include
+
+`string[]`
+
+An array of object keys to include. Overrides excludes. All keys are included by default.
+
+### exclude
+
+`string[]`
+
+An array of object keys to exclude. The keys can be nested. Can be overridden with a more deeply nested include.
