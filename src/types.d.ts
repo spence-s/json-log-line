@@ -1,9 +1,10 @@
 declare module 'fast-json-parse' {
-  type Parsed = {
-    err?: unknown;
-    value?: unknown;
+  function Parse<V extends Record<string, unknown> = Record<string, unknown>>(
+    data: string,
+  ): {
+    err?: Error;
+    value?: V;
   };
 
-  function Parse(data: unknown): Parsed;
   export = Parse;
 }

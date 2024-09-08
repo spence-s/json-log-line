@@ -5,11 +5,14 @@ import set from 'set-value';
 import isObject from './utils/is-object.js';
 import isEmpty from './utils/is-empty.js';
 
-type Options<ErrorKey extends string = 'err'> = {
-  errorKey?: ErrorKey;
+export type Options = {
+  errorKey?: string;
   exclude?: string | string[];
   include?: string | string[];
-  format?: Record<string, (...args: any[]) => string>;
+  format?: Record<
+    string,
+    (value: any, parsedLogObject?: any, ...arguments_: any[]) => string
+  >;
   logLineKeys?: string | string[];
 };
 
@@ -17,7 +20,7 @@ type LogObject = Record<string, unknown>;
 
 const nl = '\n';
 
-export function createLogLine({
+export function logLineFactory({
   /**
    * The key to use for the error object. Defaults to `err`.
    */
@@ -37,9 +40,11 @@ export function createLogLine({
 }: Options = {}) {
   const logLineKeys = Object.keys(format);
 
-  if (!format.extraFields) {
-    format.extraFields = (object: LogObject) => JSON.stringify(object) + nl;
+  if (logLineKeys.length === 0) {
+    throw new Error('format object must have at least one key');
   }
+
+  format.extraFields ||= (object: LogObject) => JSON.stringify(object) + nl;
 
   /**
    * @param inputData - The input data to be formatted can be a JSON stringified object or a plain object
@@ -48,14 +53,15 @@ export function createLogLine({
     try {
       let object: LogObject = {};
       if (typeof inputData === 'string') {
-        const parsedData = jsonParse(inputData);
+        const parsedData = jsonParse<LogObject>(inputData);
+
         if (!parsedData.value || parsedData.err) {
           return inputData + nl;
         }
 
-        object = parsedData.value as LogObject;
+        object = parsedData.value;
       } else if (isObject(inputData)) {
-        object = inputData as LogObject;
+        object = inputData;
       } else {
         return nl;
       }
@@ -116,10 +122,6 @@ export function createLogLine({
 
       let outputString = output.filter(Boolean).join(' ');
 
-      if (!outputString.endsWith(nl)) {
-        outputString += nl;
-      }
-
       // after processing the rest of the object contains
       // extra fields that were not in the logLine nor in the log line nor blacklisted
       // so these are the ones we want to prettify and highlight
@@ -131,6 +133,10 @@ export function createLogLine({
         outputString += nl;
       }
 
+      if (outputString === nl) {
+        return JSON.stringify(object) + nl;
+      }
+
       return outputString;
     } catch (error: unknown) {
       console.log(error);
@@ -138,5 +144,3 @@ export function createLogLine({
     }
   };
 }
-
-export default createLogLine;
