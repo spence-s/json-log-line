@@ -14,16 +14,15 @@
       "import": {
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
-      },
-      "require": {
-        "types": "./dist/src/index.d.ts",
-        "default": "./dist/src/index.js"
       }
     }
   },
   "main": "dist/src/index.js",
   "source": "./src/app/client/main.ts",
   "types": "dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "npm run clean && tsc --project tsconfig.build.json",
     "build:test": "npm run clean && tsc --project tsconfig.json",
