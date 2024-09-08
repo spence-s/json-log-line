@@ -2,6 +2,14 @@
   "name": "json-log-line",
   "version": "0.0.1",
   "description": "A utility for building awesome log lines from JSON",
+  "homepage": "https://github.com/spence-s/json-log-line",
+  "bugs": {
+    "url": "https://github.com/spence-s/json-log-line/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spence-s/json-log-line.git"
+  },
   "license": "MIT",
   "author": {
     "name": "Spencer Snyder",
@@ -18,7 +26,6 @@
     }
   },
   "main": "dist/src/index.js",
-  "source": "./src/app/client/main.ts",
   "types": "dist/src/index.d.ts",
   "files": [
     "dist"
