@@ -1,6 +1,6 @@
 {
   "name": "json-log-line",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A utility for building awesome log lines from JSON",
   "license": "MIT",
   "author": {
