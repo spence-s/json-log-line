@@ -9,16 +9,14 @@ test('returns the original JSON stringified string if no formatters are provided
   const logLine = logLineFactory();
   const input = JSON.stringify({foo: 'bar'});
   const result = logLine(input);
-  t.log(result);
-  t.is(result, '\n' + input + '\n');
+  t.is(result, input + '\n');
 });
 
 test('returns the JSON stringified object if an object is the input', (t) => {
   const logLine = logLineFactory();
   const input = {foo: 'bar'};
   const stringified = JSON.stringify(input);
-  t.log(input);
-  t.is(logLine(input), '\n' + stringified + '\n');
+  t.is(logLine(input), stringified + '\n');
 });
 
 test('creates a simple log line', (t) => {
@@ -33,7 +31,7 @@ test('creates a simple log line', (t) => {
 test('creates a simple log line with default extra fields', (t) => {
   const input = JSON.stringify({foo: 'bar', extra: 'baz'});
   const format = {
-    foo: (value: string) => value,
+    foo: (value: string) => value + '\n',
   };
   const logLine = logLineFactory({format});
   t.is(logLine(input), 'bar\n{"extra":"baz"}\n');
@@ -55,7 +53,7 @@ test('creates a simple log line with formatted extra fields', (t) => {
 test('nested fields can be added to log line and removed from extra fields', (t) => {
   const input = JSON.stringify({foo: {bar: 'baz'}});
   const format = {
-    'foo.bar': (value: string) => value,
+    'foo.bar': (value: string) => value + '\n',
   };
   const logLine = logLineFactory({format});
   t.is(logLine(input), 'baz\n{"foo":{}}\n');
@@ -64,7 +62,7 @@ test('nested fields can be added to log line and removed from extra fields', (t)
 test('nested respect exlude and include', (t) => {
   const input = JSON.stringify({foo: {bar: 'baz', biz: 'buz', no: 'output'}});
   const format = {
-    'foo.bar': (value: string) => value,
+    'foo.bar': (value: string) => value + '\n',
   };
   const logLine = logLineFactory({
     format,

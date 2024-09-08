@@ -8,6 +8,7 @@
     "email": "sasnyde2@gmail.com",
     "url": "https://spencersnyder.io"
   },
+  "type": "module",
   "exports": {
     ".": {
       "import": {
@@ -24,7 +25,8 @@
   "source": "./src/app/client/main.ts",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc --project tsconfig.json",
+    "build": "npm run clean && tsc --project tsconfig.build.json",
+    "build:test": "npm run clean && tsc --project tsconfig.json",
     "build:watch": "npm run clean && tsc --project tsconfig.json --watch",
     "check": "tsc --project ./tsconfig.json",
     "clean": "rimraf dist",
@@ -33,7 +35,7 @@
     "lint": "xo",
     "lint:fix": "xo --fix",
     "prepare": "husky",
-    "test": "c8 ava",
+    "test": "npm run build:test && c8 ava",
     "test:watch": "ava --watch",
     "update": "ncu -i"
   },

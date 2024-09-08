@@ -40,10 +40,6 @@ export function logLineFactory({
 }: Options = {}) {
   const logLineKeys = Object.keys(format);
 
-  if (logLineKeys.length === 0) {
-    throw new Error('format object must have at least one key');
-  }
-
   format.extraFields ||= (object: LogObject) => JSON.stringify(object) + nl;
 
   /**
