@@ -2,6 +2,7 @@ import jsonParse from 'fast-json-parse';
 import unset from 'unset-value';
 import get from 'get-value';
 import set from 'set-value';
+import deepMerge from '@fastify/deepmerge';
 import isObject from './utils/is-object.js';
 import isEmpty from './utils/is-empty.js';
 
@@ -72,10 +73,7 @@ export function logLineFactory({
       }
 
       // add back in the whitelist
-      object = {
-        ...object,
-        ...whiteListObject,
-      };
+      object = deepMerge()(object, whiteListObject);
 
       const output: string[] = [];
 

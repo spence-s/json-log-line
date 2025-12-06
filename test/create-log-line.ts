@@ -71,3 +71,12 @@ test('nested respect exlude and include', (t) => {
   });
   t.is(logLine(input), 'baz\n{"foo":{"biz":"buz"}}\n');
 });
+
+test('deep nested fields can be added to log line and removed from extra fields', (t) => {
+  const input = JSON.stringify({foo: {bar: {baz: 'buz', qux: 'quux'}}});
+  const format = {
+    'foo.bar.baz': (value: string) => value + '\n',
+  };
+  const logLine = logLineFactory({format});
+  t.is(logLine(input), 'buz\n{"foo":{"bar":{"qux":"quux"}}}\n');
+});
