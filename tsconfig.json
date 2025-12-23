@@ -8,8 +8,6 @@
     "module": "node20",
     "target": "es2023",
 
-    "esModuleInterop": true,
-
     "strict": true,
     "noUncheckedIndexedAccess": true,
 
