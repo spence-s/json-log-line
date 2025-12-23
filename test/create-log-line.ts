@@ -1,5 +1,5 @@
 import test from 'ava';
-import {logLineFactory} from '../src/index.js';
+import {logLineFactory} from '../src/index.ts';
 
 test('named export is a function', (t) => {
   t.is(typeof logLineFactory, 'function');

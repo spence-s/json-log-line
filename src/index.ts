@@ -3,8 +3,8 @@ import unset from 'unset-value';
 import get from 'get-value';
 import set from 'set-value';
 import deepMerge from '@fastify/deepmerge';
-import isObject from './utils/is-object.js';
-import isEmpty from './utils/is-empty.js';
+import isObject from './utils/is-object.ts';
+import isEmpty from './utils/is-empty.ts';
 
 export type Options = {
   exclude?: string | string[];
@@ -13,7 +13,6 @@ export type Options = {
     string,
     (value: any, parsedLogObject?: any, ...arguments_: any[]) => string
   >;
-  logLineKeys?: string | string[];
 };
 
 type LogObject = Record<string, unknown>;
@@ -77,18 +76,24 @@ export function logLineFactory({
 
       const output: string[] = [];
 
-      for (const key of logLineKeys) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const value = get(object, key);
+      for (const _key of logLineKeys) {
+        const isMulti = _key.includes('|');
 
-        if (!value) {
-          continue;
-        }
+        const keys = isMulti ? _key.split('|').map((k) => k.trim()) : [_key];
 
-        const formatter = format[key];
+        for (const key of keys) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const value = get(object, key);
 
-        if (formatter) {
-          output.push(formatter(value, object));
+          if (!value) {
+            continue;
+          }
+
+          const formatter = format[key];
+
+          if (formatter) {
+            output.push(formatter(value, object));
+          }
         }
       }
 
@@ -110,7 +115,7 @@ export function logLineFactory({
       // extra fields that were not in the logLine nor in the log line nor blacklisted
       // so these are the ones we want to prettify and highlight
       if (isObject(object) && !isEmpty(object) && format.extraFields) {
-        outputString = outputString.concat(format.extraFields(object));
+        outputString = outputString.concat(format.extraFields(object)); // eslint-disable-line unicorn/prefer-spread
       }
 
       if (!outputString.endsWith(nl)) {
