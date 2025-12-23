@@ -105,6 +105,34 @@ Format is an object the represents how you want to parse the log object. It will
 
 A special key that contains the rest of the log object fields which were both included and not formatted by a format function.
 
+#### Multi keys
+
+You can map a single formatter to multiple keys by separating them with a pipe (`|`). Each key is resolved independently (dot notation is supported) and rendered in order. Every matched value is passed through the same formatter, and each consumed key is removed from the remaining `extraFields` payload.
+
+```javascript
+const lineFormatter = logLineFactory({
+  format: {
+    // Applies to both top-level keys
+    'foo|baz': (value) => `!${value}`,
+    // Works with nested keys, too
+    'nested.a|other.a': (value) => `:${value}:`,
+  },
+});
+
+console.log(
+  lineFormatter(
+    JSON.stringify({
+      foo: 'bar',
+      baz: 'buz',
+      nested: {a: 'x', b: 'y'},
+      other: {a: 'z'},
+    }),
+  ),
+);
+// => !bar !buz :x: :z:
+//    {"nested":{"b":"y"},"other":{}}
+```
+
 ### include
 
 `string[]`

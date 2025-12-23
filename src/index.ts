@@ -34,6 +34,7 @@ export function logLineFactory({
   format = {},
 }: Options = {}) {
   const logLineKeys = Object.keys(format);
+  const splitLogLineKeys = logLineKeys.flatMap((key) => key.split('|'));
 
   format.extraFields ||= (object: LogObject) => JSON.stringify(object) + nl;
 
@@ -59,7 +60,7 @@ export function logLineFactory({
 
       // cache the whitelist
       const whiteListObject = {};
-      for (const key of [...logLineKeys, ...include]) {
+      for (const key of [...splitLogLineKeys, ...include]) {
         const value: unknown = get(object, key);
         if (value) {
           set(whiteListObject, key, value);
@@ -77,9 +78,7 @@ export function logLineFactory({
       const output: string[] = [];
 
       for (const _key of logLineKeys) {
-        const isMulti = _key.includes('|');
-
-        const keys = isMulti ? _key.split('|').map((k) => k.trim()) : [_key];
+        const keys = _key.split('|');
 
         for (const key of keys) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -89,7 +88,7 @@ export function logLineFactory({
             continue;
           }
 
-          const formatter = format[key];
+          const formatter = format[_key];
 
           if (formatter) {
             output.push(formatter(value, object));
@@ -98,7 +97,7 @@ export function logLineFactory({
       }
 
       // remove the properties that were used to create the log-line
-      for (const key of logLineKeys) {
+      for (const key of splitLogLineKeys) {
         unset(object, key);
       }
 
