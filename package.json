@@ -34,7 +34,7 @@
     "build": "npm run clean && tsc --project tsconfig.build.json",
     "check": "tsc --project ./tsconfig.json",
     "clean": "rimraf dist",
-    "lint": "xo",
+    "lint": "npm run check && xo",
     "prepare": "husky",
     "release": "np",
     "test": "c8 ava",
