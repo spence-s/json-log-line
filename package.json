@@ -1,6 +1,6 @@
 {
   "name": "json-log-line",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A utility for building awesome log lines from JSON",
   "homepage": "https://github.com/spence-s/json-log-line",
   "bugs": {
