@@ -34,7 +34,7 @@ export function logLineFactory({
   format = {},
 }: Options = {}) {
   const logLineKeys = Object.keys(format);
-  const splitLogLineKeys = logLineKeys.flatMap((key) => key.split('|'));
+  const splitLogLineKeys = logLineKeys.flatMap((key) => key.split(/\||,/));
 
   format.extraFields ||= (object: LogObject) => JSON.stringify(object) + nl;
 
@@ -78,7 +78,9 @@ export function logLineFactory({
       const output: string[] = [];
 
       for (const _key of logLineKeys) {
-        const keys = _key.split('|');
+        const isTakeOne = _key.includes('|');
+
+        const keys = _key.split(/\||,/);
 
         for (const key of keys) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -92,6 +94,10 @@ export function logLineFactory({
 
           if (formatter) {
             output.push(formatter(value, object));
+          }
+
+          if (isTakeOne) {
+            break;
           }
         }
       }

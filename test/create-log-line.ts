@@ -81,22 +81,43 @@ test('deep nested fields can be added to log line and removed from extra fields'
   t.is(logLine(input), 'buz\n{"foo":{"bar":{"qux":"quux"}}}\n');
 });
 
-test('handles multikeys', (t) => {
+test('handles multikeys with |', (t) => {
   const input = JSON.stringify({foo: 'bar', baz: 'buz'});
   const format = {
     'foo|baz': (value: string) => `!${value}`,
   };
   const logLine = logLineFactory({format});
-  t.is(logLine(input), '!bar !buz\n');
+  t.is(logLine(input), '!bar\n');
 });
 
-test('handles nested multikeys', (t) => {
+test('handles nested multikeys with |', (t) => {
   const input = JSON.stringify({
     foo: {bar: 'baz', baz: 'qux'},
     biz: {bar: 'buz'},
   });
   const format = {
     'foo.bar|biz.bar': (value: string) => `!${value}`,
+  };
+  const logLine = logLineFactory({format});
+  t.is(logLine(input), '!baz{"foo":{"baz":"qux"},"biz":{}}\n');
+});
+
+test('handles multikeys with ,', (t) => {
+  const input = JSON.stringify({foo: 'bar', baz: 'buz'});
+  const format = {
+    'foo,baz': (value: string) => `!${value}`,
+  };
+  const logLine = logLineFactory({format});
+  t.is(logLine(input), '!bar !buz\n');
+});
+
+test('handles nested multikeys with ,', (t) => {
+  const input = JSON.stringify({
+    foo: {bar: 'baz', baz: 'qux'},
+    biz: {bar: 'buz'},
+  });
+  const format = {
+    'foo.bar,biz.bar': (value: string) => `!${value}`,
   };
   const logLine = logLineFactory({format});
   t.is(logLine(input), '!baz !buz{"foo":{"baz":"qux"},"biz":{}}\n');
