@@ -36,6 +36,7 @@
     "clean": "rimraf dist",
     "lint": "npm run check && xo",
     "prepare": "husky",
+    "prepublish": "npm run build",
     "release": "np",
     "test": "c8 ava",
     "update": "ncu -i"
