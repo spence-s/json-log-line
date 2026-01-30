@@ -21,10 +21,6 @@ To use this utility, simply pass your JSON or plain object to the `logLineFactor
 ```typescript
 const options = {
   /**
-   * The key to use for the error object. Defaults to `err`.
-   */
-  errorKey: "err",
-  /**
    * include and exclude both take keys with dot notation
    */
   exclude: [],
@@ -116,18 +112,18 @@ You can map a single formatter to multiple keys using either commas (`,`) or pip
 // Take one: stop after the first matching value for each formatter key
 const lineFormatter = logLineFactory({
   format: {
-    'foo|baz': (value) => `!${value}`,
-    'nested.a|other.a': (value) => `:${value}:`,
+    "foo|baz": (value) => `!${value}`,
+    "nested.a|other.a": (value) => `:${value}:`,
   },
 });
 
 console.log(
   lineFormatter(
     JSON.stringify({
-      foo: 'bar',
-      baz: 'buz',
-      nested: {a: 'x', b: 'y'},
-      other: {a: 'z'},
+      foo: "bar",
+      baz: "buz",
+      nested: { a: "x", b: "y" },
+      other: { a: "z" },
     }),
   ),
 );
@@ -137,18 +133,18 @@ console.log(
 // Take all: format every listed key
 const takeAllFormatter = logLineFactory({
   format: {
-    'foo,baz': (value) => `!${value}`,
-    'nested.a,other.a': (value) => `:${value}:`,
+    "foo,baz": (value) => `!${value}`,
+    "nested.a,other.a": (value) => `:${value}:`,
   },
 });
 
 console.log(
   takeAllFormatter(
     JSON.stringify({
-      foo: 'bar',
-      baz: 'buz',
-      nested: {a: 'x', b: 'y'},
-      other: {a: 'z'},
+      foo: "bar",
+      baz: "buz",
+      nested: { a: "x", b: "y" },
+      other: { a: "z" },
     }),
   ),
 );
