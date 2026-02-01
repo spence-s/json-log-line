@@ -122,3 +122,47 @@ test('handles nested multikeys with ,', (t) => {
   const logLine = logLineFactory({format});
   t.is(logLine(input), '!baz !buz{"foo":{"baz":"qux"},"biz":{}}\n');
 });
+
+// Regression tests for array merging bug: arrays should not be merged/concatenated
+// when deep-merging the original object with whitelist object. See issue where
+// `aggregateErrors` or nested `errors` arrays were duplicated.
+
+test('does not merge arrays when merging aggregateErrors', (t) => {
+  const input = JSON.stringify({
+    message: 'primary',
+    aggregateErrors: [{message: 'a'}],
+  });
+
+  const format = {
+    message: (value: string) => value + '\n',
+  };
+
+  // include aggregateErrors so it ends up in the whitelist and is deep-merged
+  const logLine = logLineFactory({format, include: ['aggregateErrors']});
+
+  t.is(
+    logLine(input),
+    'primary\n' + JSON.stringify({aggregateErrors: [{message: 'a'}]}) + '\n',
+  );
+});
+
+test('does not merge arrays in nested objects when merging', (t) => {
+  const input = JSON.stringify({
+    message: 'primary',
+    foo: {errors: [{message: 'first'}], other: 'x'},
+  });
+
+  const format = {
+    message: (value: string) => value + '\n',
+  };
+
+  // include nested foo.errors so it is present in the whitelist
+  const logLine = logLineFactory({format, include: ['foo.errors']});
+
+  t.is(
+    logLine(input),
+    'primary\n' +
+      JSON.stringify({foo: {other: 'x', errors: [{message: 'first'}]}}) +
+      '\n',
+  );
+});

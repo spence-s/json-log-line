@@ -73,7 +73,10 @@ export function logLineFactory({
       }
 
       // add back in the whitelist
-      object = deepMerge()(object, whiteListObject);
+      object = deepMerge({
+        // take original arrays, we are not interested in merging them
+        mergeArray: () => (target: unknown[], source: unknown[]) => source,
+      })(object, whiteListObject);
 
       const output: string[] = [];
 
