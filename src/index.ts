@@ -1,14 +1,15 @@
-import jsonParse from 'fast-json-parse';
 import unset from 'unset-value';
 import get from 'get-value';
 import set from 'set-value';
 import deepMerge from '@fastify/deepmerge';
 import isObject from './utils/is-object.ts';
 import isEmpty from './utils/is-empty.ts';
+import {jsonParseDeep, jsonParse} from './utils/json-parse.ts';
 
 export type Options = {
   exclude?: string | string[];
   include?: string | string[];
+  parseDeep?: boolean;
   format?: Record<
     string,
     (value: any, parsedLogObject?: any, ...arguments_: any[]) => string
@@ -28,6 +29,11 @@ export function logLineFactory({
    * include always overrides exclude
    */
   include = [],
+  /**
+   * Deeply parse json strings in the log line, this is disabled by default for performance reasons, if you want to enable it,
+   * make sure to use it with a whitelist of keys that you want to deeply parse, otherwise it will deeply parse all the keys in the log line which can be very expensive
+   */
+  parseDeep = false,
   /**
    * Format functions for any given key, keys of the object are automatically included and cannot be excluded
    */
@@ -56,6 +62,10 @@ export function logLineFactory({
         object = inputData;
       } else {
         return nl;
+      }
+
+      if (parseDeep) {
+        object = jsonParseDeep(object);
       }
 
       // cache the whitelist

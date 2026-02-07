@@ -166,3 +166,25 @@ test('does not merge arrays in nested objects when merging', (t) => {
       '\n',
   );
 });
+
+test('deeply parses json strings in the log line when parseDeep is enabled', (t) => {
+  const input = JSON.stringify({
+    message: 'primary',
+    details: JSON.stringify({foo: 'bar', nested: JSON.stringify({baz: 'qux'})}),
+  });
+
+  const format = {
+    message: (value: string) => value + '\n',
+  };
+
+  const logLine = logLineFactory({format, parseDeep: true});
+
+  t.is(
+    logLine(input),
+    'primary\n' +
+      JSON.stringify({
+        details: {foo: 'bar', nested: {baz: 'qux'}},
+      }) +
+      '\n',
+  );
+});

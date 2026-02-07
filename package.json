@@ -59,7 +59,6 @@
   },
   "dependencies": {
     "@fastify/deepmerge": "^3.2.0",
-    "fast-json-parse": "^1.0.3",
     "get-value": "^4.0.1",
     "set-value": "^4.1.0",
     "unset-value": "^2.0.1"
