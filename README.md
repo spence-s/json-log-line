@@ -180,7 +180,6 @@ Example:
 ```typescript
 const logLine = logLineFactory({
   parseDeep: true,
-  include: ['details'], // only deeply parse `details` to save work
   format: {
     message: (v) => v + '\n',
   },
@@ -195,4 +194,8 @@ console.log(logLine(input));
 // =>
 // primary
 // {"details":{"foo":"bar","nested":{"baz":"qux"}}}
+
+// without parseDeep
+// primary
+// {"details":"{\\"foo\\": \\"bar\\", \\"nested\\": {\\"baz\\":\\"qux\\"}}}\n'"
 ```
