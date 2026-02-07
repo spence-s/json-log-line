@@ -64,10 +64,6 @@ export function logLineFactory({
         return nl;
       }
 
-      if (parseDeep) {
-        object = jsonParseDeep(object);
-      }
-
       // cache the whitelist
       const whiteListObject = {};
       for (const key of [...splitLogLineKeys, ...include]) {
@@ -87,6 +83,10 @@ export function logLineFactory({
         // take original arrays, we are not interested in merging them
         mergeArray: () => (target: unknown[], source: unknown[]) => source,
       })(object, whiteListObject);
+
+      if (parseDeep) {
+        object = jsonParseDeep(object);
+      }
 
       const output: string[] = [];
 

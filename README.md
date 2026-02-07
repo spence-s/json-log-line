@@ -163,3 +163,36 @@ An array of object keys to include. Overrides excludes. All keys are included by
 `string[]`
 
 An array of object keys to exclude. The keys can be nested. Can be overridden with a more deeply nested include.
+
+### parseDeep
+
+`boolean` (default: `false`)
+
+When enabled, the formatter will attempt to deeply parse string values that are themselves JSON. This is useful when logs include JSON-stringified fields (for example, a `details` field that contains a JSON string). The parser will recursively parse nested JSON strings inside objects and arrays and replace them with their parsed counterparts.
+
+Notes:
+
+- Disabled by default for performance — parsing every string can be expensive.
+- Non-JSON strings are left untouched.
+
+Example:
+
+```typescript
+const logLine = logLineFactory({
+  parseDeep: true,
+  include: ['details'], // only deeply parse `details` to save work
+  format: {
+    message: (v) => v + '\n',
+  },
+});
+
+const input = JSON.stringify({
+  message: 'primary',
+  details: JSON.stringify({foo: 'bar', nested: JSON.stringify({baz: 'qux'})}),
+});
+
+console.log(logLine(input));
+// =>
+// primary
+// {"details":{"foo":"bar","nested":{"baz":"qux"}}}
+```
