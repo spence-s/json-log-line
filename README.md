@@ -158,11 +158,58 @@ console.log(
 
 An array of object keys to include. Overrides excludes. All keys are included by default.
 
+Example (include overrides exclude):
+
+```javascript
+// include wins over exclude: only nested.field will be pulled out
+const formatter = logLineFactory({
+  include: ['nested.field'],
+  exclude: ['nested'],
+  format: {
+    'nested.field': (v) => `:${v}:\n`,
+    part1: (v) => `[${v}]`,
+  },
+});
+
+const log = JSON.stringify({
+  nested: { field: 'FIELD', other: 'something' },
+  part1: 'hello',
+  part2: 'world',
+});
+
+console.log(formatter(log));
+// => [hello] :FIELD:
+//    {"part2":"world","nested":{"other":"something"}}
+```
+
 ### exclude
 
 `string[]`
 
 An array of object keys to exclude. The keys can be nested. Can be overridden with a more deeply nested include.
+
+Example (excluding keys and nested keys):
+
+```javascript
+// exclude top-level or nested keys from the output and extraFields
+const formatter = logLineFactory({
+  exclude: ['sensitive', 'meta.trace'],
+  format: {
+    message: (v) => v + '\n',
+  },
+});
+
+const log = JSON.stringify({
+  message: 'primary',
+  sensitive: 'secret',
+  meta: { trace: 'lots', id: 1 },
+  other: 'ok',
+});
+
+console.log(formatter(log));
+// => primary
+//    {"other":"ok","meta":{"id":1}}
+```
 
 ### parseDeep
 
