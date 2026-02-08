@@ -188,3 +188,27 @@ test('deeply parses json strings in the log line when parseDeep is enabled', (t)
       '\n',
   );
 });
+
+test('parseDeep does not parse numeric strings', (t) => {
+  const input = JSON.stringify({
+    message: 'primary',
+    count: '123',
+    details: JSON.stringify({foo: 'bar'}),
+  });
+
+  const format = {
+    message: (value: string) => value + '\n',
+  };
+
+  const logLine = logLineFactory({format, parseDeep: true});
+
+  t.is(
+    logLine(input),
+    'primary\n' +
+      JSON.stringify({
+        count: '123',
+        details: {foo: 'bar'},
+      }) +
+      '\n',
+  );
+});

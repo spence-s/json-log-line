@@ -1,5 +1,17 @@
+import isObject from './is-object.ts';
+
+export function isDeepParsable(
+  input: any,
+): input is Record<string, unknown> | unknown[] {
+  return (isObject(input) || Array.isArray(input)) && input !== null;
+}
+
 export function isParsableString(input: unknown): input is string {
-  return typeof input === 'string' && input.trim().length > 0;
+  return (
+    typeof input === 'string' &&
+    input.trim().length > 0 &&
+    (input.trim().endsWith('}') || input.trim().startsWith('['))
+  );
 }
 
 export function jsonParse<T>(
@@ -22,45 +34,32 @@ export function jsonParse<T>(
   }
 }
 
-export function jsonParseDeep(
-  object: Record<string, unknown>,
-): Record<string, unknown> {
+export function jsonParseDeep(object: any): any {
+  if (isParsableString(object)) {
+    const parsed = jsonParse<Record<string, unknown> | unknown[]>(object);
+
+    if (!parsed.err && parsed.value) {
+      return jsonParseDeep(parsed.value);
+    }
+
+    // If parsing fails, return the original string
+    return object;
+  }
+
+  if (!isDeepParsable(object)) {
+    return object;
+  }
+
+  if (Array.isArray(object)) {
+    return object.map((item) => jsonParseDeep(item)); // eslint-disable-line @typescript-eslint/no-unsafe-return
+  }
+
   for (const key in object) {
     if (!Object.hasOwn(object, key)) continue;
 
     const value = object[key];
 
-    if (isParsableString(value)) {
-      const parsed = jsonParse(value.trim());
-      if (!parsed.err) {
-        object[key] = parsed.value;
-
-        // recursively parse nested objects/arrays
-        if (object[key] && typeof object[key] === 'object') {
-          // eslint-disable-next-line max-depth
-          if (Array.isArray(object[key])) {
-            object[key] = (object[key] as unknown[]).map((item) =>
-              item && typeof item === 'object'
-                ? jsonParseDeep(item as Record<string, unknown>)
-                : item,
-            ) as unknown;
-          } else {
-            object[key] = jsonParseDeep(object[key] as Record<string, unknown>);
-          }
-        }
-      }
-    } else if (value && typeof value === 'object') {
-      // recursively parse nested objects/arrays
-      if (Array.isArray(value)) {
-        object[key] = (value as unknown[]).map((item) =>
-          item && typeof item === 'object'
-            ? jsonParseDeep(item as Record<string, unknown>)
-            : item,
-        ) as unknown;
-      } else {
-        object[key] = jsonParseDeep(value as Record<string, unknown>);
-      }
-    }
+    object[key] = jsonParseDeep(value);
   }
 
   return object;
