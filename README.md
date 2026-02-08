@@ -166,20 +166,18 @@ const formatter = logLineFactory({
   include: ['nested.field'],
   exclude: ['nested'],
   format: {
-    'nested.field': (v) => `:${v}:\n`,
-    part1: (v) => `[${v}]`,
+    message: (v) => `[${v}]`,
   },
 });
 
 const log = JSON.stringify({
   nested: { field: 'FIELD', other: 'something' },
-  part1: 'hello',
-  part2: 'world',
+  message: 'hello world',
 });
 
 console.log(formatter(log));
-// => [hello] :FIELD:
-//    {"part2":"world","nested":{"other":"something"}}
+// => [hello world]
+//    {"nested":{"field":"FIELD"}}
 ```
 
 ### exclude
@@ -215,12 +213,7 @@ console.log(formatter(log));
 
 `boolean` (default: `false`)
 
-When enabled, the formatter will attempt to deeply parse string values that are themselves JSON. This is useful when logs include JSON-stringified fields (for example, a `details` field that contains a JSON string). The parser will recursively parse nested JSON strings inside objects and arrays and replace them with their parsed counterparts.
-
-Notes:
-
-- Disabled by default for performance — parsing every string can be expensive.
-- Non-JSON strings are left untouched.
+When enabled, the formatter will attempt to deeply parse string values that are themselves JSON. This is useful when logs include JSON-stringified fields (for example, a `details` field that contains a JSON string). The parser will recursively parse nested JSON strings inside objects and arrays and replace them with their parsed counterparts. Non-JSON strings are left untouched.
 
 Example:
 
