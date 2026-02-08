@@ -1,7 +1,7 @@
 import isObject from './is-object.ts';
 
 export function isDeepParsable(
-  input: any,
+  input: unknown,
 ): input is Record<string, unknown> | unknown[] {
   return (isObject(input) || Array.isArray(input)) && input !== null;
 }
@@ -26,7 +26,7 @@ export function jsonParse<T>(
       return {err: new Error('Input is not a string')};
     }
 
-    const value = JSON.parse(maybeParsableObject) as T;
+    const value = JSON.parse(maybeParsableObject, reviver) as T;
 
     return {value};
   } catch (error) {
@@ -34,7 +34,11 @@ export function jsonParse<T>(
   }
 }
 
-export function jsonParseDeep(object: any): any {
+export function jsonParseDeep(object: string): Record<string, unknown> | unknown[] | string; // eslint-disable-line prettier/prettier
+export function jsonParseDeep(object: unknown[]): unknown[];
+export function jsonParseDeep(object: Record<string, unknown>): Record<string, unknown>; // eslint-disable-line prettier/prettier
+export function jsonParseDeep<T>(object: T): T;
+export function jsonParseDeep(object: unknown) {
   if (isParsableString(object)) {
     const parsed = jsonParse<Record<string, unknown> | unknown[]>(object);
 
@@ -51,7 +55,7 @@ export function jsonParseDeep(object: any): any {
   }
 
   if (Array.isArray(object)) {
-    return object.map((item) => jsonParseDeep(item)); // eslint-disable-line @typescript-eslint/no-unsafe-return
+    return object.map((item) => jsonParseDeep(item));
   }
 
   for (const key in object) {

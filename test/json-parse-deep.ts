@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import test from 'ava';
 import {jsonParseDeep} from '../src/utils/json-parse.ts';
 

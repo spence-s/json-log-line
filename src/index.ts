@@ -85,7 +85,7 @@ export function logLineFactory({
       })(object, whiteListObject);
 
       if (parseDeep) {
-        object = jsonParseDeep(object) as Record<string, unknown>;
+        object = jsonParseDeep(object);
       }
 
       const output: string[] = [];
